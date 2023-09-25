@@ -51,4 +51,10 @@ Route::middleware('jwt.verify')->group(function () {
 
     Route::get('/savelater', [ApiController::class, 'getSaveLater']);
     Route::post('/savelater', [ApiController::class, 'postSaveLater']);
+
+
+
+
+
+
 });

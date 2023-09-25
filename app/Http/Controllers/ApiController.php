@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Chapter;
 use App\Models\Comment;
+use App\Models\Concern;
 use App\Models\Follower;
 use App\Models\Following;
 use App\Models\Like;
@@ -655,6 +656,21 @@ class ApiController extends Controller
             $wishlist->video_id = request()->query('videoId');
             $wishlist->save();
             return response()->json(["status" => 200, "message" => "Added to SaveLater Successfully", "data" => []], 200);
+        } catch (Exception $e) {
+            return response()->json(["status" => 500, "message" => $e->getMessage(), "data" => []], 403);
+        }
+    }
+
+    public function postconcern(Request $request)
+    {
+        try {
+
+            $wishlist = new Concern();
+            $wishlist->user_id = request()->query('userId');
+            $wishlist->title = $request->title;
+            $wishlist->concern = $request->concern;
+            $wishlist->save();
+            return response()->json(["status" => 200, "message" => "Concern Send Successfully!", "data" => []], 200);
         } catch (Exception $e) {
             return response()->json(["status" => 500, "message" => $e->getMessage(), "data" => []], 403);
         }
