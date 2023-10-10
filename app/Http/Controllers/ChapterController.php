@@ -53,8 +53,14 @@ class ChapterController extends Controller
             }
             if ($request->image) {
                 $image = $request->file('image');
-                $path = $image->store('images', 'public');
-                Chapter::where('id', '=', $id)->update(['name' => $request->name,'subcategory' => $request->subcategory, 'image' => $path]);
+                $imageFileName = time() . '.' . $image->getClientOriginalExtension();
+
+                $imagePath = $request->file('image')->storeAs(
+                    'images',
+                    $imageFileName,
+                    's3'
+                );
+                Chapter::where('id', '=', $id)->update(['name' => $request->name,'subcategory' => $request->subcategory, 'image' => $imagePath]);
             } else {
                 Chapter::where('id', '=', $id)->update(['name' => $request->name,'subcategory' => $request->subcategory]);
             }
@@ -87,11 +93,17 @@ class ChapterController extends Controller
 
         try {
 
-            $path = $image->store('images', 'public');
+            $imageFileName = time() . '.' . $image->getClientOriginalExtension();
+
+            $imagePath = $request->file('image')->storeAs(
+                'images',
+                $imageFileName,
+                's3'
+            );
 
             // Save the image data to the database.
             $categoryModel = new Chapter();
-            $categoryModel->image = $path;
+            $categoryModel->image = $imagePath;
             $categoryModel->name = $request->name;
             $categoryModel->subcategory = $request->subcategory;
             $categoryModel->save();

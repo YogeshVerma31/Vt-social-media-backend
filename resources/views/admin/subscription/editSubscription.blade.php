@@ -4,7 +4,7 @@
 <head>
 
     <meta charset="utf-8" />
-    <title>Dashboard | Upcube - Admin & Dashboard Template</title>
+    <title>Opucation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesdesign" name="author" />
@@ -51,81 +51,58 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                                <h4 class="mb-sm-0">View Chapter</h4>
+                                <h4 class="mb-sm-0">Edit Subscription</h4>
                             </div>
                         </div>
                     </div>
                     <!-- end page title -->
 
                     <div class="row">
-                        <div class="col-12">
+
+                        <div class="col-xl-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <form class="needs-validation" method="GET" action="{{ route('view-chapter') }}">
+                                    <h4 class="card-title">Edit Subscription</h4>
+                                    <form class="needs-validation" method="POST" action="{{ route('updateSubscription',$subscription->id) }}">
+                                        @csrf
 
                                         <div class="row">
-                                            <div class="col-sm-3">
-                                                <select class="form-select" name="id" required="true" aria-label="Default select example">
-                                                    @foreach ($subject as $category)
-                                                    <option value="{{ $category->id }}"> {{ $category->subcategory_name }}</option>
-                                                    @endforeach
-                                                </select>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="validationCustom01" class="form-label">Subscription Title</label>
+                                                    <input type="text" value="{{$subscription->title}}" class="form-control" id="validationCustom01" placeholder="Subscription Title" name="title" required>
+                                                </div>
                                             </div>
-                                            <div class="col-sm-1">
-                                            <button class="btn btn-primary" type="submit">Submit</button>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="validationCustom01" class="form-label">Subscription Actual Price (Rs.)</label>
+                                                    <input type="text" value="{{$subscription->price}}" class="form-control" id="validationCustom01" placeholder="Subscription Price" name="price" required>
+                                                </div>
                                             </div>
-                                            <div class="col-sm-1">
-                                            <a class="btn btn-primary" href="{{route('view-chapter')}}">Clear</a>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="validationCustom01" class="form-label">Subscription discounted Price (Rs.)</label>
+                                                    <input type="text" value="{{$subscription->discounted_price}}" class="form-control" id="validationCustom01" placeholder="Subscription Discounted Price" name="discounted_price" required>
+                                                </div>
                                             </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="validationCustom01" class="form-label">Subscription Validity</label>
+                                                    <input type="text" value="{{$subscription->validity}}" class="form-control" id="validationCustom01" placeholder="Subscription Validity" name="validity" required>
+                                                </div>
+                                            </div>
+                                        </div>
 
+                                        <div class="col-md-6">
+                                            <button class="btn btn-primary" type="submit">Update</button>
                                         </div>
 
                                     </form>
-                                    <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-
-                                        <thead>
-                                            <tr>
-                                                <th>id</th>
-                                                <th>Name</th>
-                                                <th>Image</th>
-                                                <th>Subject Name</th>
-                                                <th>Status</th>
-                                                <th>Created At</th>
-                                                <th>Updated At</th>
-                                                <th>Edit</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($chapter as $category)
-                                            <tr>
-                                                <td> {{ $category->id }} </td>
-                                                <td> {{ $category->name}} </td>
-                                                <td class="text-center"> <img src="{{ Storage::disk('s3')->url( $category->image) }}" height="50" /> </td>
-                                                <td> {{ $category->subcategory_name}} </td>
-                                                <td> @if($category->status=='0')
-                                                    <a href="{{ route('updateChapterStatus', ['id' => $category->id]) }}" class="btn-sm btn btn-danger waves-effect waves-light">inactive</a>
-                                                    @else
-                                                    <a href="{{ route('updateChapterStatus', ['id' => $category->id]) }}" class="btn-sm btn btn-success waves-effect waves-light">active</a>
-                                                    @endif
-
-                                                </td>
-                                                <td> {{ $category->created_at->format('d/m/Y ')}} </td>
-                                                <td> {{ $category->updated_at->format('d/m/Y ')}} </td>
-                                                <td style="min-width: 50%;">
-                                                    <div class="row">
-                                                        <a href="{{ route('editChapter',$category->id) }}" class="btn btn-sm btn-warning mb-2"><i class="fa fa-edit"></i></a>
-                                                        <!-- <a class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a> -->
-                                                    </div>
-                                                </td>
-
-                                                @endforeach
-                                            </tr>
-                                        </tbody>
-                                    </table>
-
                                 </div>
                             </div>
+                            <!-- end card -->
                         </div> <!-- end col -->
+
                     </div>
                     <!-- end row -->
 

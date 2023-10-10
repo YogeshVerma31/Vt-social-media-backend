@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatApiController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,12 +27,14 @@ Route::post('send-push', [ApiController::class, 'sendPushNotification']);
 Route::middleware('jwt.verify')->group(function () {
     Route::get('/user', [UserController::class, 'apiGetUser']);
     Route::get('/homeData', [ApiController::class, 'homeData']);
+
     Route::get('/chapters/{id}', [ApiController::class, 'subjectWiseChapter']);
     Route::get('/likedislike/{id}', [ApiController::class, 'likeDislikeVideo']);
     Route::get('/comments/{id}', [ApiController::class, 'getCommentsOnVideo']);
     Route::post('/comments/{id}', [ApiController::class, 'postCommentsOnVideo']);
     Route::get('/videoByChapter/{id}', [ApiController::class, 'videoByChapterId']);
     Route::get('/videos', [ApiController::class, 'allVideos']);
+
     Route::get('/todayvideos', [ApiController::class, 'todaysLearningVideos']);
     Route::get('/likedvideos', [ApiController::class, 'likedVideo']);
     Route::get('/search/{subjectName}', [ApiController::class, 'searchVideo']);
@@ -51,6 +54,11 @@ Route::middleware('jwt.verify')->group(function () {
 
     Route::get('/savelater', [ApiController::class, 'getSaveLater']);
     Route::post('/savelater', [ApiController::class, 'postSaveLater']);
+
+
+    Route::get('/chatList', [ChatApiController::class, 'getChatList']);
+    Route::get('/subscription', [ApiController::class, 'getSubscription']);
+
 
 
 

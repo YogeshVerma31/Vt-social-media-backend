@@ -11,6 +11,7 @@ use App\Models\Following;
 use App\Models\Like;
 use App\Models\SaveLater;
 use App\Models\SubCategory;
+use App\Models\Subscription;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\Wishlist;
@@ -673,6 +674,17 @@ class ApiController extends Controller
             return response()->json(["status" => 200, "message" => "Concern Send Successfully!", "data" => []], 200);
         } catch (Exception $e) {
             return response()->json(["status" => 500, "message" => $e->getMessage(), "data" => []], 403);
+        }
+    }
+
+    public function getSubscription(Request $request)
+    {
+
+        try {
+            $response = Subscription::all();
+            return response()->json(["status" => 200, "message" => "Success", "data" => $response], 200);
+        } catch (Exception $e) {
+            return response()->json(["status" => 500, "message" => $e->getMessage(), "data" => []], 500);
         }
     }
 }

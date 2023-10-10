@@ -4,7 +4,7 @@
 <head>
 
     <meta charset="utf-8" />
-    <title>Dashboard | Upcube - Admin & Dashboard Template</title>
+    <title>Opucation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesdesign" name="author" />
@@ -51,7 +51,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                                <h4 class="mb-sm-0">View Chapter</h4>
+                                <h4 class="mb-sm-0">View Subscription</h4>
                             </div>
                         </div>
                     </div>
@@ -61,60 +61,34 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <form class="needs-validation" method="GET" action="{{ route('view-chapter') }}">
-
-                                        <div class="row">
-                                            <div class="col-sm-3">
-                                                <select class="form-select" name="id" required="true" aria-label="Default select example">
-                                                    @foreach ($subject as $category)
-                                                    <option value="{{ $category->id }}"> {{ $category->subcategory_name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-1">
-                                            <button class="btn btn-primary" type="submit">Submit</button>
-                                            </div>
-                                            <div class="col-sm-1">
-                                            <a class="btn btn-primary" href="{{route('view-chapter')}}">Clear</a>
-                                            </div>
-
-                                        </div>
-
-                                    </form>
-                                    <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-
+                                    <table id="datatable" class="table table-bordered nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                         <thead>
                                             <tr>
+
                                                 <th>id</th>
-                                                <th>Name</th>
-                                                <th>Image</th>
-                                                <th>Subject Name</th>
-                                                <th>Status</th>
-                                                <th>Created At</th>
-                                                <th>Updated At</th>
-                                                <th>Edit</th>
+                                                <th>Subscription Title</th>
+                                                <th>Subscription Price</th>
+                                                <th>Subscription Discounted Price</th>
+                                                <th>Subscription Validity (in Months)</th>
+                                                <th>Action</th>
+                                                {{-- <th>Created At</th>
+                                                <th>Updated At</th> --}}
+
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($chapter as $category)
-                                            <tr>
-                                                <td> {{ $category->id }} </td>
-                                                <td> {{ $category->name}} </td>
-                                                <td class="text-center"> <img src="{{ Storage::disk('s3')->url( $category->image) }}" height="50" /> </td>
-                                                <td> {{ $category->subcategory_name}} </td>
-                                                <td> @if($category->status=='0')
-                                                    <a href="{{ route('updateChapterStatus', ['id' => $category->id]) }}" class="btn-sm btn btn-danger waves-effect waves-light">inactive</a>
-                                                    @else
-                                                    <a href="{{ route('updateChapterStatus', ['id' => $category->id]) }}" class="btn-sm btn btn-success waves-effect waves-light">active</a>
-                                                    @endif
+                                            @foreach ($subscriptionList as $response)
 
-                                                </td>
-                                                <td> {{ $category->created_at->format('d/m/Y ')}} </td>
-                                                <td> {{ $category->updated_at->format('d/m/Y ')}} </td>
+                                            <tr>
+                                                <td> {{ $response->id }} </td>
+                                                <td> {{ $response->title}} </td>
+                                                <td> {{ $response->price}} </td>
+                                                <td> {{ $response->discounted_price}}</td>
+                                                <td> {{ $response->validity}} </td>
                                                 <td style="min-width: 50%;">
                                                     <div class="row">
-                                                        <a href="{{ route('editChapter',$category->id) }}" class="btn btn-sm btn-warning mb-2"><i class="fa fa-edit"></i></a>
-                                                        <!-- <a class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a> -->
+                                                        <a href="{{ route('editSubscription',$response->id)}}" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
+                                                        <a class="btn btn-sm btn-danger" href="{{ route('deleteSubscription',$response->id) }}"><i class="fa fa-trash"></i></a>
                                                     </div>
                                                 </td>
 
@@ -125,7 +99,7 @@
 
                                 </div>
                             </div>
-                        </div> <!-- end col -->
+                        </div>
                     </div>
                     <!-- end row -->
 

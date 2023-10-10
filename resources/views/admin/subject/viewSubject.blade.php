@@ -86,15 +86,15 @@
                                             <tr>
                                                 <td> {{ $category->id }} </td>
                                                 <td> {{ $category->subcategory_name}} </td>
-                                                <td class="text-center"> <img src="{{ Storage::url( $category->subcategory_image) }}" height="50" /> </td>
+                                                <td class="text-center"> <img src="{{ Storage::disk('s3')->url( $category->subcategory_image) }}" height="50" /> </td>
                                                 <td> {{ $category->category_name}} </td>
 
                                                 <td>  @if($category->status=='0')
-                                                    <a href="{{ route('updateSubCategoryStatus', ['id' => $category->id]) }}" class="btn-sm btn btn-danger waves-effect waves-light">inactive</a> 
+                                                    <a href="{{ route('updateSubCategoryStatus', ['id' => $category->id]) }}" class="btn-sm btn btn-danger waves-effect waves-light">inactive</a>
                                                     @else
                                                     <a href="{{ route('updateSubCategoryStatus', ['id' => $category->id]) }}" class="btn-sm btn btn-success waves-effect waves-light">active</a>
                                                     @endif
-                                                
+
                                                 </td>
                                                 <td> {{ $category->created_at->format('d/m/Y ')}} </td>
                                                 <td> {{ $category->updated_at->format('d/m/Y ')}} </td>

@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class TodayLearningController extends Controller
 {
@@ -22,13 +23,13 @@ class TodayLearningController extends Controller
             return  redirect()->intended('/view-course');
         }
     }
-    
+
 
     public function viewTodayLearning(Request $request)
     {
 
         try {
-            $trendingVideos = Video::where('is_today_learning_video','=',1)->where('created_at', '>=', Carbon::now()->subDay()->toDateTimeString())->get();
+            $trendingVideos = Video::where('is_today_learning_video', '=', 1)->where('created_at', '>=', Carbon::now()->subDay()->toDateTimeString())->get();
             return view("admin/learning_video/viewLearningVideo", ['trendingVideos' => $trendingVideos]);
         } catch (Exception $e) {
             Session::flash('error', $e->getMessage());
@@ -63,8 +64,21 @@ class TodayLearningController extends Controller
                 return redirect()->intended('/videos');
             }
 
-            $path = $video->store('videos', 'public');
-            $imagePath = $image->store('images', 'public');
+            $videoFileName = time() . '.' . $video->getClientOriginalExtension();
+
+            $path = $request->file('video_url')->storeAs(
+                'videos',
+                $videoFileName,
+                's3'
+            );
+            $imageFileName = time() . '.' . $image->getClientOriginalExtension();
+
+            $imagePath = $request->file('video_thumbnail')->storeAs(
+                'images',
+                $imageFileName,
+                's3'
+            );
+
 
             // Save the image data to the database.
             $videoModel = new Video();
@@ -85,6 +99,118 @@ class TodayLearningController extends Controller
         } catch (Exception $e) {
             Session::flash('error', $e->getMessage());
             return redirect()->intended('/today_learning');
+        }
+    }
+
+    public function editVideos(Request $request, $id)
+    {
+        $videoModel = Video::find($id);
+        return view("admin/learning_video/editLearningVideo", ['videos' => $videoModel]);
+    }
+
+    public function updateVideo(Request $request, $id)
+    {
+
+
+        try {
+
+            $videoModel = Video::where('id', '=', $id)->first();
+
+            if (!$videoModel) {
+                Session::flash('error', 'Video not found');
+                return redirect()->intended("/videos");
+            }
+
+            if ($request->video_url && $request->video_thumbnail) {
+                $video = $request->file('video_url');
+                $image = $request->file('video_thumbnail');
+                $videoFileName = time() . '.' . $video->getClientOriginalExtension();
+
+                $videoPath = $request->file('video_url')->storeAs(
+                    'videos',
+                    $videoFileName,
+                    's3'
+                );
+                $imageFileName = time() . '.' . $image->getClientOriginalExtension();
+
+                $imagePath = $request->file('video_thumbnail')->storeAs(
+                    'images',
+                    $imageFileName,
+                    's3'
+                );
+
+                Video::where('id', '=', $id)
+                    ->update([
+                        'video_name' => $request->video_name,
+                        'video_desc' => $request->video_desc,
+                        'video_url' => $videoPath,
+                        'video_thumbnail' => $imagePath,
+                    ]);
+            } else if ($request->video_url && !$request->video_thumbnail) {
+                $video = $request->file('video_url');
+                $videoFileName = time() . '.' . $video->getClientOriginalExtension();
+
+                $videoPath = $request->file('video_url')->storeAs(
+                    'videos',
+                    $videoFileName,
+                    's3'
+                );
+
+
+                Video::where('id', '=', $id)
+                    ->update([
+                        'video_name' => $request->video_name,
+                        'video_desc' => $request->video_desc,
+                        'video_url' => $videoPath
+                    ]);
+            } else if (!$request->video_url && $request->video_thumbnail) {
+                $image = $request->file('video_thumbnail');
+                $imageFileName = time() . '.' . $image->getClientOriginalExtension();
+
+                $imagePath = $request->file('video_thumbnail')->storeAs(
+                    'images',
+                    $imageFileName,
+                    's3'
+                );
+
+
+                Video::where('id', '=', $id)
+                    ->update([
+                        'video_name' => $request->video_name,
+                        'video_desc' => $request->video_desc,
+                        'video_thumbnail' => $imagePath,
+                    ]);
+            } else {
+
+                Video::where('id', '=', $id)
+                    ->update([
+                        'video_name' => $request->video_name,
+                        'video_desc' => $request->video_desc,
+                    ]);
+            }
+
+
+
+            Session::flash('success', 'Video updated successfully');
+            return redirect()->intended("view-today-learning");
+        } catch (Exception $e) {
+            Session::flash('error', $e->getMessage());
+            return redirect()->intended("view-today-learning");
+        }
+    }
+
+    public function deleteVideos(Request $request, $id)
+    {
+        try {
+            $videoModel = Video::find($id);
+            Storage::disk('s3')->delete($videoModel->video_url);
+            Storage::disk('s3')->delete($videoModel->video_thumbnail);
+            $videoModel->delete();
+            Session::flash('success', 'Video deleted successfully');
+            return redirect()->intended("view-today-learning");
+        } catch (Exception $e) {
+            Session::flash('error', $e->getMessage());
+            return redirect()->intended("view-today-learning");
         }
     }
 }

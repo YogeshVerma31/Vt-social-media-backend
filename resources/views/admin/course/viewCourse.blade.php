@@ -84,7 +84,7 @@
                                             <tr>
                                                 <td> {{ $category->category_id }} </td>
                                                 <td> {{ $category->category_name}} </td>
-                                                <td class="text-center"> <img src="{{ Storage::url( $category->category_image) }}" height="50" /> </td>
+                                                <td class="text-center"> <img src="{{ Storage::disk('s3')->url($category->category_image) }}" height="50" /> </td>
                                                 <td> @if($category->status=='0')
                                                     <a href="{{ route('updateCategoryStatus', ['id' => $category->category_id]) }}" class="btn-sm btn btn-danger waves-effect waves-light">inactive</a>
                                                     @else

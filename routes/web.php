@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\RoutesController;
 use App\Http\Controllers\SubCategoryController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TodayLearningController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserTypeController;
@@ -36,7 +37,7 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 
 Route::group(['middleware'=>['customAuth']],function(){
-   
+
     Route::get('/', [RoutesController::class,'index'])->name('dashboard');
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
@@ -75,7 +76,7 @@ Route::group(['middleware'=>['customAuth']],function(){
     Route::get('/view-user',[UserController::class, 'index'])->name('view-user');
     Route::get('/create-user',[UserController::class, 'viewCreateUser'])->name('view-create-user');
 
-    
+
     Route::get('/videos',[VideoController::class, 'index'])->name('videos');
     Route::post('/videos',[VideoController::class, 'createVideos'])->name('createVideo');
     Route::get('/edit-videos/{id}',[VideoController::class, 'editVideos'])->name('editVideo');
@@ -84,6 +85,16 @@ Route::group(['middleware'=>['customAuth']],function(){
 
     Route::get('/view-video',[VideoController::class, 'index'])->name('view-video');
     Route::get('/create-video',[VideoController::class, 'viewCreateVideo'])->name('view-create-video');
+
+
+    Route::get('view-create-subscription',[SubscriptionController::class, 'index'])->name('view-create-subscription');
+    Route::get('/view-subscription',[SubscriptionController::class, 'viewSubscription'])->name('view-subscription');
+    Route::post('/create-subscription',[SubscriptionController::class, 'createSubscription'])->name('createSubscription');
+    Route::get('/edit-subscription/{id}',[SubscriptionController::class, 'editSubscription'])->name('editSubscription');
+    Route::post('/update-subscription/{id}',[SubscriptionController::class, 'updateSubscription'])->name('updateSubscription');
+    Route::get('/delete-subscription/{id}',[SubscriptionController::class, 'deleteSubscription'])->name('deleteSubscription');
+
+
 
 
     Route::get('/view-chapter',[ChapterController::class, 'index'])->name('view-chapter');
@@ -97,11 +108,14 @@ Route::group(['middleware'=>['customAuth']],function(){
 
     Route::get('/getSubcategory/{id}',[ApiController::class, 'getSubcategoryByCategoryId']);
     Route::get('/getChapter/{id}',[ApiController::class, 'getChapterBySubCategoryId']);
-    
+
 
     Route::get('/today_learning',[TodayLearningController::class, 'index'])->name('create-today-learning');
     Route::post('/create-today-learning',[TodayLearningController::class, 'createTodaysLearningVideos'])->name('create-today-learning-video');
     Route::get('/view-today-learning',[TodayLearningController::class, 'viewTodayLearning'])->name('view-today-learning');
+    Route::get('/edit-today-learning/{id}',[TodayLearningController::class, 'editVideos'])->name('editTrendingLearning');
+    Route::post('/update-today-learning/{id}',[TodayLearningController::class, 'updateVideo'])->name('updateTodayLearning');
+    Route::get('/delete-today-learning/{id}',[TodayLearningController::class, 'deleteVideos'])->name('deleteTodayLearning');
 
 
 

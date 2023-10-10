@@ -104,6 +104,17 @@
                       </ul>
                   </li>
 
+                  <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="ri-dashboard-line"></i>
+                        <span>Subscription</span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li><a href="{{route('view-create-subscription')}}">Create Subscription</a></li>
+                        <li><a href="{{route('view-subscription')}}">View Subscription</a></li>
+                    </ul>
+                </li>
+
 
 
 

@@ -72,8 +72,9 @@
                                                 <th>Video Length</th>
                                                 <!-- <th>Video Uploaded By</th>  -->
                                                 <th>Video Thumbnail</th>
-                                                <th>Created At</th>
-                                                <th>Updated At</th>
+                                                <th>Action</th>
+                                                {{-- <th>Created At</th>
+                                                <th>Updated At</th> --}}
 
                                             </tr>
                                         </thead>
@@ -87,9 +88,13 @@
                                                 <td> <a target="_" href="{{asset(Storage::url($videos->video_url))}}"> Link </a></td>
                                                 <td> {{ $videos->video_length}} </td>
                                                 <!-- <td> {{ $videos->users_name}} </td> -->
-                                                <td class="text-center"> <img src="{{ Storage::url( $videos->video_thumbnail) }}" height="50" /> </td>
-                                                <td> {{ $videos->created_at->format('d/m/Y ')}} </td>
-                                                <td> {{ $videos->updated_at->format('d/m/Y ')}} </td>
+                                                <td class="text-center"> <img src="{{ Storage::disk('s3')->url( $videos->video_thumbnail)}}" height="50" /> </td>
+                                                <td style="min-width: 50%;">
+                                                    <div class="row">
+                                                        <a href="{{ route('editTrendingLearning',$videos->id) }}" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
+                                                        <a class="btn btn-sm btn-danger" href="{{ route('deleteTodayLearning',$videos->id) }}"><i class="fa fa-trash"></i></a>
+                                                    </div>
+                                                </td>
 
                                                 @endforeach
                                             </tr>

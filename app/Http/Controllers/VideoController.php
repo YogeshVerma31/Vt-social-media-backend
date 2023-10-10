@@ -9,6 +9,7 @@ use App\Models\Video;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class VideoController extends Controller
 {
@@ -66,7 +67,6 @@ class VideoController extends Controller
 
 
         $extension = $video->getClientOriginalExtension();
-        $imageExtension = $image->getClientOriginalExtension();
 
         // Store the video in the storage (e.g., public disk).
         try {
@@ -76,8 +76,21 @@ class VideoController extends Controller
                 return redirect()->intended('/videos');
             }
 
-            $path = $video->store('videos', 'public');
-            $imagePath = $image->store('images', 'public');
+            $videoFileName = time() . '.' . $video->getClientOriginalExtension();
+
+            $path = $request->file('video_url')->storeAs(
+                'videos',
+                $videoFileName,
+                's3'
+            );
+
+            $imageFileName = time() . '.' . $image->getClientOriginalExtension();
+
+            $imagePath = $request->file('video_thumbnail')->storeAs(
+                'images',
+                $imageFileName,
+                's3'
+            );
 
             // Save the image data to the database.
             $videoModel = new Video();
@@ -118,51 +131,51 @@ class VideoController extends Controller
                 $image = $request->file('video_thumbnail');
                 $videoPath = $video->store('videos', 'public');
                 $imagePath = $image->store('images', 'public');
-                
+
 
                 Video::where('id', '=', $id)
-                    ->update(['video_name' =>$request->video_name, 
-                    'video_desc' => $request->video_desc, 
+                    ->update(['video_name' =>$request->video_name,
+                    'video_desc' => $request->video_desc,
                     'video_url' => $videoPath,
                     'video_thumbnail'=>$imagePath,
                     'video_course'=>$request->video_course,
                     'video_subject'=>$request->video_subject,
-                    'video_chapter'=>$request->video_chapter,                
+                    'video_chapter'=>$request->video_chapter,
                 ]);
             } else if($request->video_url && !$request->video_thumbnail){
-                $video = $request->file('video_url');               
+                $video = $request->file('video_url');
                 $videoPath = $video->store('videos', 'public');
-                
+
 
                 Video::where('id', '=', $id)
-                    ->update(['video_name' =>$request->video_name, 
-                    'video_desc' => $request->video_desc, 
+                    ->update(['video_name' =>$request->video_name,
+                    'video_desc' => $request->video_desc,
                     'video_url' => $videoPath,
                     'video_course'=>$request->video_course,
                     'video_subject'=>$request->video_subject,
-                    'video_chapter'=>$request->video_chapter,                
+                    'video_chapter'=>$request->video_chapter,
                 ]);
             }else if(!$request->video_url && $request->video_thumbnail){
                 $image = $request->file('video_thumbnail');
                 $imagePath = $image->store('images', 'public');
-                
+
 
                 Video::where('id', '=', $id)
-                    ->update(['video_name' =>$request->video_name, 
-                    'video_desc' => $request->video_desc, 
+                    ->update(['video_name' =>$request->video_name,
+                    'video_desc' => $request->video_desc,
                     'video_thumbnail'=>$imagePath,
                     'video_course'=>$request->video_course,
                     'video_subject'=>$request->video_subject,
-                    'video_chapter'=>$request->video_chapter,                
+                    'video_chapter'=>$request->video_chapter,
                 ]);
             }else{
 
                 Video::where('id', '=', $id)
-                    ->update(['video_name' =>$request->video_name, 
-                    'video_desc' => $request->video_desc, 
+                    ->update(['video_name' =>$request->video_name,
+                    'video_desc' => $request->video_desc,
                     'video_course'=>$request->video_course,
                     'video_subject'=>$request->video_subject,
-                    'video_chapter'=>$request->video_chapter,                
+                    'video_chapter'=>$request->video_chapter,
                 ]);
             }
 

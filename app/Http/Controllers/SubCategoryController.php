@@ -32,11 +32,17 @@ class SubCategoryController extends Controller
         // Store the image in the storage (e.g., public disk).
         try {
 
-            $path = $image->store('images', 'public');
+            $imageFileName = time() . '.' . $image->getClientOriginalExtension();
+
+            $imagePath = $request->file('subcategory_image')->storeAs(
+                'images',
+                $imageFileName,
+                's3'
+            );
 
             // Save the image data to the database.
             $categoryModel = new SubCategory();
-            $categoryModel->subcategory_image = $path;
+            $categoryModel->subcategory_image = $imagePath;
             $categoryModel->subcategory_name = $request->subcategory_name;
             $categoryModel->category_id = $request->category_id;
             $categoryModel->save();
@@ -108,9 +114,15 @@ class SubCategoryController extends Controller
             }
             if ($request->subcategory_image) {
                 $image = $request->file('subcategory_image');
-                $path = $image->store('images', 'public');
+                $imageFileName = time() . '.' . $image->getClientOriginalExtension();
 
-                SubCategory::where('id', '=', $id)->update(['subcategory_name' => $request->subcategory_name,'category_id' => $request->category_id, 'subcategory_image' => $path]);
+            $imagePath = $request->file('subcategory_image')->storeAs(
+                'images',
+                $imageFileName,
+                's3'
+            );
+
+                SubCategory::where('id', '=', $id)->update(['subcategory_name' => $request->subcategory_name,'category_id' => $request->category_id, 'subcategory_image' => $imagePath]);
             } else {
                 SubCategory::where('id', '=', $id)->update(['subcategory_name' => $request->subcategory_name,'category_id' => $request->category_id]);
             }

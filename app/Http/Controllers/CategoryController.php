@@ -21,17 +21,21 @@ class CategoryController extends Controller
 
         $image = $request->file('category_image');
 
-        // Get the size of the image in bytes.
-        $sizeInBytes = $image->getSize();
-
         // Store the image in the storage (e.g., public disk).
         try {
 
-            $path = $image->store('images', 'public');
+            $imageFileName = time() . '.' . $image->getClientOriginalExtension();
+
+            $imagePath = $request->file('category_image')->storeAs(
+                'images',
+                $imageFileName,
+                's3'
+            );
+
 
             // Save the image data to the database.
             $categoryModel = new Category();
-            $categoryModel->category_image = $path;
+            $categoryModel->category_image = $imagePath;
             $categoryModel->category_name = $request->category_name;
             $categoryModel->save();
 
@@ -122,9 +126,17 @@ class CategoryController extends Controller
             }
             if ($request->category_image) {
                 $image = $request->file('category_image');
-                $path = $image->store('images', 'public');
 
-                Category::where('category_id', '=', $id)->update(['category_name' => $request->category_name, 'category_image' => $path]);
+                $imageFileName = time() . '.' . $image->getClientOriginalExtension();
+
+            $imagePath = $request->file('category_image')->storeAs(
+                'images',
+                $imageFileName,
+                's3'
+            );
+
+
+                Category::where('category_id', '=', $id)->update(['category_name' => $request->category_name, 'category_image' => $imagePath]);
             } else {
                 Category::where('category_id', '=', $id)->update(['category_name' => $request->category_name]);
             }
