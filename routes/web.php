@@ -4,6 +4,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ChapterController;
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\RoutesController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SubscriptionController;
@@ -11,9 +12,7 @@ use App\Http\Controllers\TodayLearningController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserTypeController;
 use App\Http\Controllers\VideoController;
-use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,6 +93,19 @@ Route::group(['middleware'=>['customAuth']],function(){
     Route::post('/update-subscription/{id}',[SubscriptionController::class, 'updateSubscription'])->name('updateSubscription');
     Route::get('/delete-subscription/{id}',[SubscriptionController::class, 'deleteSubscription'])->name('deleteSubscription');
 
+    Route::get('view-create-coupon',[CouponController::class, 'index'])->name('view-create-coupon');
+    Route::post('/create-coupon',[CouponController::class, 'createCoupon'])->name('createCoupon');
+    Route::get('/coupons',[CouponController::class, 'viewCoupon'])->name('view-coupon');
+    Route::get('/edit-coupon/{id}',[CouponController::class, 'editCoupon'])->name('editCoupon');
+    Route::get('/delete-coupon/{id}',[CouponController::class, 'deleteCoupon'])->name('deleteCoupon');
+    Route::post('/update-coupon/{id}',[CouponController::class, 'updateCoupon'])->name('updateCoupon');
+    Route::get('/coupon/status/{id}', [CouponController::class, 'updateStatusCoupon'])->name('updateCouponStatus');
+
+
+
+
+
+
 
 
 
@@ -116,8 +128,6 @@ Route::group(['middleware'=>['customAuth']],function(){
     Route::get('/edit-today-learning/{id}',[TodayLearningController::class, 'editVideos'])->name('editTrendingLearning');
     Route::post('/update-today-learning/{id}',[TodayLearningController::class, 'updateVideo'])->name('updateTodayLearning');
     Route::get('/delete-today-learning/{id}',[TodayLearningController::class, 'deleteVideos'])->name('deleteTodayLearning');
-
-
 
 
 

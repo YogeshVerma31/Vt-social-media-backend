@@ -3,6 +3,7 @@
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatApiController;
+use App\Http\Controllers\PlayListApiController;
 use App\Http\Controllers\StudentProgressApiController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -50,6 +51,11 @@ Route::middleware('jwt.verify')->group(function () {
 
     Route::post('/studentProgress', [StudentProgressApiController::class, 'postAddProgress']);
     Route::get('/studentProgress', [StudentProgressApiController::class, 'getProgress']);
+
+    //PlaylistApi
+    Route::get('/playlist', [PlayListApiController::class, 'playlistByUser']);
+    Route::post('/playlist', [PlayListApiController::class, 'createPlaylistByUser']);
+    Route::get('/playlistvideo', [PlayListApiController::class, 'playlistVideo']);
 
 
 
