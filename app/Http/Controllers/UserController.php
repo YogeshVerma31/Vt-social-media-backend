@@ -16,7 +16,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class UserController extends Controller
 {
 
-    
+
 
     public function index(Request $request){
         try {
@@ -63,12 +63,31 @@ class UserController extends Controller
             if(!$user){
                 return response()->json(["status"=>403,"message"=>"User not found","data"=>[]],403);
             }
-        
+
             return response()->json(["status"=>201,"message"=>"User Created Successfully","data"=>$user],201);
 
         } catch (JWTException $e) {
             return response()->json(["status"=>500,"message"=>$e->getMessage(),"data"=>[]],403);
         }
     }
-    
+
+    public function getUsersByList(Request $request)
+    {
+        try {
+
+            $members = $request->members;
+
+            $response = [];
+
+            foreach ($members as $users) {
+                $response = User::where("id",$users);
+            }
+
+            return response()->json(["status"=>201,"message"=>"User Successfully","data"=>$response],201);
+
+        } catch (JWTException $e) {
+            return response()->json(["status"=>500,"message"=>$e->getMessage(),"data"=>[]],403);
+        }
+    }
+
 }

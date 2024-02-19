@@ -39,6 +39,14 @@ class CategoryController extends Controller
             $categoryModel->category_name = $request->category_name;
             $categoryModel->save();
 
+            $firebase = new FirebasePushController();
+            $requestFirebase = new Request();
+            $requestFirebase['title'] = "New course added";
+            $requestFirebase['body'] = "Course $request->category_name added ";
+            $requestFirebase['imageUrl'] = "$imagePath";
+            $requestFirebase['topic'] = 'CoursePublish';
+            $firebase->sendPushToFCM($requestFirebase);
+
             Session::flash('success', 'Category created successfully');
             return  redirect()->intended('/category');
         } catch (Exception $e) {

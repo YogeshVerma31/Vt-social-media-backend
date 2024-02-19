@@ -7,9 +7,9 @@ use App\Models\Chapter;
 use App\Models\Comment;
 use App\Models\Concern;
 use App\Models\Follower;
-use App\Models\Following;
 use App\Models\Like;
 use App\Models\SaveLater;
+use App\Models\StudentProgress;
 use App\Models\SubCategory;
 use App\Models\Subscription;
 use App\Models\User;
@@ -20,8 +20,9 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ApiController extends Controller
+class   ApiController extends Controller
 {
+
 
     public function homeData(Request $request)
     {
@@ -71,15 +72,17 @@ class ApiController extends Controller
                     $videosUploadedBy = Video::join("users", "users.id", "videos.video_uploaded_by")
                         ->select("users.name", "users.id")->where("video_chapter", "=", $chapter->id)->first();
 
-                        $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
-                    ->select("users.*", "wishlists.*")
-                    ->where("video_id", "=", $video->id)
-                    ->where("user_id", "=", $request->userId)->first() ? true : false;
+                    $views = StudentProgress::where("video_id", "=", $video->id)->get()->count();
+
+                    $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
+                        ->select("users.*", "wishlists.*")
+                        ->where("video_id", "=", $video->id)
+                        ->where("user_id", "=", $request->userId)->first() ? true : false;
 
                     $saveLaterByMe = SaveLater::leftjoin('users', 'users.id', '=', 'save_laters.user_id')
-                    ->select("users.*", "save_laters.*")
-                    ->where("video_id", "=", $video->id)
-                    ->where("user_id", "=", $request->userId)->first() ? true : false;
+                        ->select("users.*", "save_laters.*")
+                        ->where("video_id", "=", $video->id)
+                        ->where("user_id", "=", $request->userId)->first() ? true : false;
 
                     if (count($videos) > 0) {
                         $homeData['chapterId'] = $chapter->id;
@@ -91,6 +94,7 @@ class ApiController extends Controller
                         $video['wishlistByMe'] = $WishlistByMe;
                         $video['saveLaterByMe'] = $saveLaterByMe;
                         $video['videosUploadedBy'] = $videosUploadedBy;
+                        $video['views'] = $views;
                     }
                 }
                 if (count($homeData) > 0)
@@ -119,12 +123,12 @@ class ApiController extends Controller
                 $likeByMe = Like::join('users', 'users.id', '=', 'likes.user_id')
                     ->select("users.*", "likes.*")->where("video_id", "=", $video->id)
                     ->where("user_id", "=", $request->userId)->first() ? true : false;
-                    $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
+                $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
                     ->select("users.*", "wishlists.*")
                     ->where("video_id", "=", $video->id)
                     ->where("user_id", "=", $request->userId)->first() ? true : false;
 
-                    $saveLaterByMe = SaveLater::leftjoin('users', 'users.id', '=', 'save_laters.user_id')
+                $saveLaterByMe = SaveLater::leftjoin('users', 'users.id', '=', 'save_laters.user_id')
                     ->select("users.*", "save_laters.*")
                     ->where("video_id", "=", $video->id)
                     ->where("user_id", "=", $request->userId)->first() ? true : false;
@@ -252,12 +256,12 @@ class ApiController extends Controller
                     ->select("users.*", "likes.*")->where("video_id", "=", $video->id)
                     ->where("user_id", "=", $request->userId)->first() ? true : false;
 
-                    $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
+                $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
                     ->select("users.*", "wishlists.*")
                     ->where("video_id", "=", $video->id)
                     ->where("user_id", "=", $request->userId)->first() ? true : false;
 
-                    $saveLaterByMe = SaveLater::leftjoin('users', 'users.id', '=', 'save_laters.user_id')
+                $saveLaterByMe = SaveLater::leftjoin('users', 'users.id', '=', 'save_laters.user_id')
                     ->select("users.*", "save_laters.*")
                     ->where("video_id", "=", $video->id)
                     ->where("user_id", "=", $request->userId)->first() ? true : false;
@@ -344,12 +348,12 @@ class ApiController extends Controller
                 $videosUploadedBy = Video::join("users", "users.id", "videos.video_uploaded_by")
                     ->select("users.name", "users.id")->first();
 
-                    $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
+                $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
                     ->select("users.*", "wishlists.*")
                     ->where("video_id", "=", $video->id)
                     ->where("user_id", "=", $request->userId)->first() ? true : false;
 
-                    $saveLaterByMe = SaveLater::leftjoin('users', 'users.id', '=', 'save_laters.user_id')
+                $saveLaterByMe = SaveLater::leftjoin('users', 'users.id', '=', 'save_laters.user_id')
                     ->select("users.*", "save_laters.*")
                     ->where("video_id", "=", $video->id)
                     ->where("user_id", "=", $request->userId)->first() ? true : false;
@@ -389,12 +393,12 @@ class ApiController extends Controller
                     ->select("users.*", "likes.*")->where("video_id", "=", $video->id)
                     ->where("user_id", "=", $request->userId)->first() ? true : false;
 
-                    $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
+                $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
                     ->select("users.*", "wishlists.*")
                     ->where("video_id", "=", $video->id)
                     ->where("user_id", "=", $request->userId)->first() ? true : false;
 
-                    $saveLaterByMe = SaveLater::leftjoin('users', 'users.id', '=', 'save_laters.user_id')
+                $saveLaterByMe = SaveLater::leftjoin('users', 'users.id', '=', 'save_laters.user_id')
                     ->select("users.*", "save_laters.*")
                     ->where("video_id", "=", $video->id)
                     ->where("user_id", "=", $request->userId)->first() ? true : false;
@@ -455,7 +459,24 @@ class ApiController extends Controller
                     'users.*',
                     DB::raw("count(likes.id) as likedPost"),
                 )
-                ->groupBy('users.id', 'users.name', 'users.email', 'users.mobilenumber', 'users.profile_image', 'users.password', 'users.remember_token', 'users.created_at', 'users.updated_at', 'users.course', 'users.usertype', 'users.status', 'users.fcm_token', 'users.views')
+                ->groupBy(
+                    'users.id',
+                    'users.name',
+                    'users.email',
+                    'users.mobilenumber',
+                    'users.profile_image',
+                    'users.mobile_verify',
+                    'users.otp',
+                    'users.password',
+                    'users.remember_token',
+                    'users.created_at',
+                    'users.updated_at',
+                    'users.course',
+                    'users.usertype',
+                    'users.status',
+                    'users.fcm_token',
+                    'users.views'
+                )
                 ->where('users.id', '=', $request->query('id'))
                 ->first();
             $data['following'] = Follower::where('follower_id', '=', $request->query('id'))->get()->count();
@@ -539,7 +560,7 @@ class ApiController extends Controller
                 $videosUploadedBy = Video::join("users", "users.id", "videos.video_uploaded_by")
                     ->select("users.name", "users.id")->first();
 
-                    $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
+                $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
                     ->select("users.*", "wishlists.*")
                     ->where("video_id", "=", $video->id)
                     ->where("user_id", "=", $request->userId)->first() ? true : false;
@@ -609,7 +630,7 @@ class ApiController extends Controller
                 $videosUploadedBy = Video::join("users", "users.id", "videos.video_uploaded_by")
                     ->select("users.name", "users.id")->first();
 
-                    $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
+                $WishlistByMe = Wishlist::leftjoin('users', 'users.id', '=', 'wishlists.user_id')
                     ->select("users.*", "wishlists.*")
                     ->where("video_id", "=", $video->id)
                     ->where("user_id", "=", $request->userId)->first() ? true : false;

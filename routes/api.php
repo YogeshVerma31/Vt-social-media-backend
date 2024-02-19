@@ -3,6 +3,8 @@
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatApiController;
+use App\Http\Controllers\FirebasePushController;
+use App\Http\Controllers\OtpController;
 use App\Http\Controllers\PlayListApiController;
 use App\Http\Controllers\StudentProgressApiController;
 use App\Http\Controllers\UserController;
@@ -10,7 +12,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('signup', [AuthController::class, 'apiCreateStudent']);
 Route::post('login', [AuthController::class, 'apiLoginStudent']);
-Route::post('send-push', [ApiController::class, 'sendPushNotification']);
+// Route::post('send-push', [ApiController::class, 'sendPushNotification']);
+Route::get('sendotp', [OtpController::class, 'sendOtp']);
+Route::post('verifyMobile', [OtpController::class, 'verifyMobileNumber']);
+Route::post('sendForgetOtp', [OtpController::class, 'forgetSendOtp']);
+Route::post('verifyForgetOtp', [OtpController::class, 'verifyForgetOtp']);
+Route::post('updatePassword', [AuthController::class, 'changePassword']);
 
 
 
@@ -24,6 +31,8 @@ Route::middleware('jwt.verify')->group(function () {
     Route::post('/comments/{id}', [ApiController::class, 'postCommentsOnVideo']);
     Route::get('/videoByChapter/{id}', [ApiController::class, 'videoByChapterId']);
     Route::get('/videos', [ApiController::class, 'allVideos']);
+    Route::post("/concern", [ApiController::class, 'postconcern']);
+
 
     Route::get('/todayvideos', [ApiController::class, 'todaysLearningVideos']);
     Route::get('/likedvideos', [ApiController::class, 'likedVideo']);
@@ -56,12 +65,12 @@ Route::middleware('jwt.verify')->group(function () {
     Route::get('/playlist', [PlayListApiController::class, 'playlistByUser']);
     Route::post('/playlist', [PlayListApiController::class, 'createPlaylistByUser']);
     Route::get('/playlistvideo', [PlayListApiController::class, 'playlistVideo']);
+    Route::post('/playlistvideo', [PlayListApiController::class, 'addVideoToPlaylist']);
 
+    //
+    Route::post("get-users", [UserController::class, 'getUsersByList']);
 
-
-
-
-
-
-
+    Route::post("update-profile-image", [AuthController::class, 'changeProfileImage']);
+    Route::post("update-profile", [AuthController::class, 'changeProfileData']);
+    Route::post("send-push", [FirebasePushController::class, 'sendPushToFCM']);
 });

@@ -151,14 +151,16 @@ class AuthController extends BaseController
                 return response()->json(["status" => 403, "message" => "Mobile number already exist", "data" => []], 403);
             }
 
+
+
             $image = $request->file('profile_image');
             $path = $image->store('images', 'public');
             User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'profile_image'=>$path,
+                'profile_image' => $path,
                 'mobilenumber' => $request->mobilenumber,
-                'password' => password_hash($request->password, PASSWORD_DEFAULT),
+                'password' =>   ($request->password, PASSWORD_DEFAULT),
                 'usertype' => 4
             ]);
             return response()->json(["status" => 200, "message" => "User Created Successfully", "data" => $path], 200);
@@ -196,6 +198,61 @@ class AuthController extends BaseController
             $user['token'] = $jwt_token;
 
             return response()->json(["status" => 201, "message" => "Login Successfully", "data" => $user], 201);
+        } catch (Exception $e) {
+            return response()->json(["status" => 500, "message" => $e->getMessage(), "data" => []], 403);
+        }
+    }
+
+    public function changePassword(Request $request)
+    {
+        try {
+
+            if ($request->inputType == "email") {
+                $user = User::where("email", $request->input)->update(["password" => password_hash($request->password, PASSWORD_DEFAULT)]);
+            } else {
+                $user = User::where("mobilenumber", $request->input)->update(["password" => password_hash($request->password, PASSWORD_DEFAULT)]);
+            }
+
+
+            return response()->json(["status" => 200, "message" => "Password updated Successfully", "data" => []], 200);
+        } catch (Exception $e) {
+            return response()->json(["status" => 500, "message" => $e->getMessage(), "data" => []], 403);
+        }
+    }
+    public function changeProfileImage(Request $request)
+    {
+        try {
+
+
+            $image = $request->file('profile_image');
+            $imageFileName = time() . '.' . $image->getClientOriginalExtension();
+
+            $imagePath = $request->file('profile_image')->storeAs(
+                'images',
+                $imageFileName,
+                's3'
+            );
+
+            $user = User::where("id", $request->id)->update(["profile_image" =>$imagePath]);
+
+
+            return response()->json(["status" => 200, "message" => "Image updated Successfully", "data" => []], 200);
+        } catch (Exception $e) {
+            return response()->json(["status" => 500, "message" => $e->getMessage(), "data" => []], 403);
+        }
+    }
+
+    public function changeProfileData(Request $request)
+    {
+        try {
+
+            $bio = $request->bio;
+            $fullname = $request->full_name;
+
+            $user = User::where("id", $request->id)->update(["bio" =>$bio,'name'=>$fullname]);
+
+
+            return response()->json(["status" => 200, "message" => "Profile updated Successfully", "data" => []], 200);
         } catch (Exception $e) {
             return response()->json(["status" => 500, "message" => $e->getMessage(), "data" => []], 403);
         }

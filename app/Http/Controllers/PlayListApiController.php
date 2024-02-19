@@ -84,4 +84,22 @@ class PlayListApiController extends Controller
             return response()->json(["status" => 500, "message" => $e->getMessage(), "data" => []], 500);
         }
     }
+
+    public function addVideoToPlaylist(Request $request){
+        try {
+            $videoId = request()->query('videoId');
+            $list = $request->playlist;
+            PlaylistVideo::Where('video_id',$videoId)->delete();
+            foreach ($list as $data) {
+                $playlistVideo = new PlaylistVideo();
+                $playlistVideo->playlist_id = $data['id'];
+                $playlistVideo->video_id = $videoId;
+                $playlistVideo->save();
+            }
+
+            return response()->json(["status" => 200, "message" => "Success"], 200);
+        } catch (Exception $e) {
+            return response()->json(["status" => 500, "message" => $e->getMessage(), "data" => []], 500);
+        }
+    }
 }
